@@ -1,4 +1,5 @@
-#NOTE: Possibly add the methods as class methods instead?
+from book import Book
+from member import Member
 
 class Library:
     def __init__(self):
@@ -28,3 +29,29 @@ class Library:
 
     def get_member(self, member_id):
         return self.members[member_id]
+    
+    def borrow_book(self, member_id, isbn):
+        member = self.members[member_id] #Stores member object
+        book = self.books[isbn] #Stores book object
+        if book.borrow() == True and member.borrow_book(book) == True: #Calls both methods
+            print("Success book as been borrowed - Library")
+        else:
+            print("Error book could not be borrowed - Library")
+
+    def return_book(self, member_id, isbn):
+        book = self.books[isbn]
+        member = self.members[member_id]
+        if book in member.borrowed_books:
+            book.return_book()
+            member.return_book(book)
+            print("Success, book has been returned!")
+        else:
+            print("This member is not borrowing this book")
+    
+    def __str__(self):
+        print("\nBooks:")
+        for item in self.books:
+            print(self.books[item].__str__())
+        print("\nMembers:")
+        for person in self.members:
+            print(self.members[person].__str__())

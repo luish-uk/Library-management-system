@@ -1,5 +1,6 @@
 from book import Book
-from member import Member
+from member import Member, StudentMember, FacultyMember
+import json
 
 class Library:
     def __init__(self):
@@ -30,8 +31,8 @@ class Library:
     def get_member(self, member_id):
         return self.members[member_id]
     
-    def borrow_book(self, member_id, isbn):
-        borrower = self.members[member_id] #Stores member object
+    def borrow_book(self, member_id, isbn):#if key error 1 appears add the book first
+        borrower = self.members[member_id] #Stores member object 
         book = self.books[isbn] #Stores book object
         if borrower.borrow_book(book) == True: 
             print("Success book as been borrowed - Library")
@@ -39,9 +40,9 @@ class Library:
             print("Error book could not be borrowed - Library")
 
     def return_book(self, member_id, isbn):
-        book = self.books[isbn]
+        book = self.books[isbn] 
         returner = self.members[member_id]
-        if book in returner.borrowed_books:
+        if isbn in returner.borrowed_books:
             book.return_book()
             returner.return_book(book)
             print("Success, book has been returned!")
@@ -82,11 +83,18 @@ class Library:
             for person in self.members:
                 person = self.members[person]
                 print(f"\n{person.name}:")
-                person.get_borrowed_books()
+                booklist = person.get_borrowed_books()
+                for ISBN in booklist:
+                    book = self.books[ISBN]
+                    print(book)
         else:
             person = self.members[member_id]
             print(f"\n{person.name}:")
-            person.get_borrowed_books()
+            booklist = person.get_borrowed_books()
+            for ISBN in booklist:
+                book = self.books[ISBN]
+                print(book)
+
     
     def __str__(self):
         print("\nBooks:")
@@ -96,4 +104,39 @@ class Library:
         for person in self.members:
             print(self.members[person].__str__())
 
-    
+    def serialization(self):
+        with open("Library.json", 'w') as file:
+            serializedlibrary = {"books": [], "members": []}
+            for item in self.books:
+                serializedbook = self.books[item].serialization()
+                serializedlibrary["books"].append(serializedbook)
+            for id in self.members:
+                serializedmember = self.members[id].serialization()
+                serializedlibrary["members"].append(serializedmember)
+            json.dump(serializedlibrary, file, indent = 4)
+    def deserialization(self):
+        with open("Library.json", "r") as file:
+            data = json.load(file)
+
+            self.books = {}
+            self.members = {}
+
+
+
+            for book_data in data["books"]:
+                book = Book(book_data["title"], book_data["author"], book_data["isbn"])
+                book.is_available = book_data["is_available"]
+                self.books[book.isbn] = book
+
+            for member_data in data["members"]:
+                if member_data["type"] == "Student":
+                    memberdeserialized = StudentMember(member_data["name"], member_data["member_id"])
+                elif member_data["type"] == "Faculty":
+                    memberdeserialized = FacultyMember(member_data["name"], member_data["member_id"])
+                else:
+                    memberdeserialized = Member(member_data["name"], member_data["member_id"])
+                
+                for isbn in member_data["borrowed_books"]:
+                    memberdeserialized.borrowed_books.append(isbn)
+                
+                self.members[memberdeserialized.member_id] = memberdeserialized

@@ -25,4 +25,6 @@ class Book:
     def __str__(self):
         return '{} by {}'.format(self.title, self.author)
     
+    def serialization(self):
+        return self.__dict__
 

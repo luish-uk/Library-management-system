@@ -1,22 +1,25 @@
 from book import Book
 from member import Member, StudentMember, FacultyMember
 import json
-#NOTE: List books that are overdue method, and a calculate late fees method 
 
 """
 This library class initlizes a new library with an empty dictionary holding all the books it stores (in house and being borrowed) as well as all the registered members at the library including faculty
 """
 class Library:
     def __init__(self):
+        
         self.books = {}
         self.members = {}
+    
     
     """
     This method takes a book instance from the book class and if the book is not already in the books dictionary (stores all of the library instance books) with the key being the isbn attribute from the book parameter, it will therefore be added to the libraries collection, else it will return an error message
     """
     def add_book(self, book):
+        
         if (book.isbn) not in self.books:
             self.books[book.isbn] = book
+        
         else:
             return 'Error, this book has already been added'
     
@@ -25,8 +28,10 @@ class Library:
     Removes a book from the library via it's stored isbn attribute compared to the isbn attribute in the parameter. If the isbn passed in exists in the libraries collection of books (the books dictionary) then it will be removed, else it returns an error message.
     """
     def remove_book(self, isbn):
+        
         if (isbn) in self.books:
             del self.books[isbn]
+        
         else: 
             return 'Error, this book doesn\'t exist'
         
@@ -35,8 +40,10 @@ class Library:
     This method registers a member with the member method and compares the passed in object with the members dictionary holding all current members in the library, if they aren't in the dictionary via their member_id, they are added to the dictionary and the passed in object is the value, with the key being the member's id. If they already are registered then an error message is returned.
     """
     def register_member(self, member):
+        
         if (member.member_id) not in self.members:
             self.members[member.member_id] = member
+        
         else:
             return 'Error, this member already exists'
 
@@ -66,10 +73,13 @@ class Library:
     - If it returns true then a conformation is printed, else then an error is printed instead 
     """
     def borrow_book(self, member_id, isbn):
-        borrower = self.members[member_id] #Stores member object 
-        book = self.books[isbn] #Stores book object
+        
+        borrower = self.members[member_id] 
+        book = self.books[isbn] 
+
         if borrower.borrow_book(book) == True: 
             print("Success book as been borrowed - Library")
+        
         else:
             print("Error book could not be borrowed - Library")
 
@@ -84,12 +94,17 @@ class Library:
     - if the book wasn't in the returner's list of borrowed books and error is printed
     """
     def return_book(self, member_id, isbn):
+        
         book = self.books[isbn] 
         returner = self.members[member_id]
+
         if isbn in returner.borrowed_books:
+
             book.return_book()
             returner.return_book(book)
+
             print("Success, book has been returned!")
+        
         else:
             print("This member is not borrowing this book")
 
@@ -101,19 +116,30 @@ class Library:
     - if not results were found a subsequent error is printed. 
     """
     def search_books(self, query): 
+        
         print(f"\nSearch Results for '{query}':")
-        results_found = False #Any results?
-        length = len(query) #length of query 
+
+        results_found = False 
+        length = len(query) 
+        
         for item in self.books:
-            result = self.books[item] #grabs book objects
+
+            result = self.books[item] 
             title = result.title 
             author = result.author
-            if query.upper() == title[:length].upper(): #does query match the first characters (=length) of the books (title/author)
+            
+            if query.upper() == title[:length].upper():
+
                 print(result.__str__())
+
                 results_found = True
+            
             if query.upper() == author[:length].upper():
+
                 print(result.__str__())
+
                 results_found = True
+        
         if results_found == False:
             print("Unable to find results from query")
 
@@ -122,7 +148,9 @@ class Library:
     Loops through all the books in the library and prints the fomatted string for them from the books class
     """
     def list_all_books(self):
+        
         print("\nBooks:")
+        
         for item in self.books:
             print(self.books[item].__str__())
     
@@ -131,9 +159,13 @@ class Library:
     list of available books is similar to list_all_books method but it checks the books availablity through the book class attribute
     """
     def list_available_books(self):
+
         print("\nAvailable Books:")
+
         for item in self.books:
+            
             item = self.books[item]
+            
             if item.is_available:
                 print(item.__str__())
 
@@ -146,19 +178,27 @@ class Library:
     - it only calls the member's borrowed books method from the member class specified in this methods parameter and subsequently prints the dunder string method for each book using the list of borrowed book's isbn on the library's dictionary collection of books
     """
     def list_member_books(self, member_id=None):
+        
         if member_id is None:
+            
             for person in self.members:
+                
                 person = self.members[person]
                 print(f"\n{person.name}:")
                 booklist = person.get_borrowed_books()
+
                 for ISBN in booklist:
+                    
                     book = self.books[ISBN]
                     print(book)
         else:
+
             person = self.members[member_id]
             print(f"\n{person.name}:")
             booklist = person.get_borrowed_books()
+
             for ISBN in booklist:
+                
                 book = self.books[ISBN]
                 print(book)
 
@@ -166,11 +206,14 @@ class Library:
     This method simply prints all the members and books currently logged in the libraries dictionaries, via for loops that iterate through each value pair and print the corresponding dunder string for that object
     """
     def __str__(self):
+
         print("\nBooks:")
+
         for item in self.books:
             print(self.books[item].__str__())
 
         print("\nMembers:")
+
         for person in self.members:
             print(self.members[person].__str__())
 
@@ -184,10 +227,12 @@ class Library:
             serializedlibrary = {"books": [], "members": []}
 
             for item in self.books:
+
                 serializedbook = self.books[item].serialization()
                 serializedlibrary["books"].append(serializedbook)
 
             for id in self.members:
+
                 serializedmember = self.members[id].serialization()
                 serializedlibrary["members"].append(serializedmember)
 
@@ -209,21 +254,26 @@ class Library:
     """
     def deserialization(self):
         with open("Library.json", "r") as file:
+
             data = json.load(file)
 
             self.books = {}
             self.members = {}
 
             for book_data in data["books"]:
+
                 book = Book(book_data["title"], book_data["author"], book_data["isbn"])
                 book.is_available = book_data["is_available"]
                 self.books[book.isbn] = book
 
             for member_data in data["members"]:
+
                 if member_data["type"] == "Student":
                     memberdeserialized = StudentMember(member_data["name"], member_data["member_id"])
+
                 elif member_data["type"] == "Faculty":
                     memberdeserialized = FacultyMember(member_data["name"], member_data["member_id"])
+                    
                 else:
                     memberdeserialized = Member(member_data["name"], member_data["member_id"])
                 

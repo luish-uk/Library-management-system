@@ -16,7 +16,7 @@ class Book:
             return False
         
     def get_info(self):
-        return print(self.__dict__)
+        return self.__dict__
     
 
     def return_book(self):

@@ -85,6 +85,7 @@ lib1.deserialization
 
 ## What OOP concepts did I use?
 The variety of concepts used in this project were: 
+
 **Inheritance**
 I used inheritance to make my code more streamlined with the sub classes StudentMember and FacultyMember inheriting the Member class, this allowed me to use the dunder init method as well as adding additional attributes like type changes and modifying the number of books that can be borrowed for each sub class.
 
@@ -105,3 +106,9 @@ Instead of changing a book's attribute for it's availablity directly, I used enc
 Today I learned how to use classes and objects effectively in a large scale environemt, this includes allowing methods to interact with other classes. Maintaining my code with effective documentation, providing changed in order of: Initialization of class methods, adding additional features, implementing file persistance and adding documentation. 
 
 I also learned how to effectively test my code with each addition as well as making changes public through frequent but also valuable git commits. I will admit though as the project grew in size and I added more and more classes, it became harder to keep track of all the individual smaller peices that made up the bigger picture. Like for example when it came to serialization I felt like I really stuggled to turn all the objects in the borrowed_books list into just isbn's and back which is why I switched to isbn's permenantly instead as I thought it would integrate better with the methods in the library class that use isbn's as their paramters. 
+
+## Code Statistics 
+-- **Total line of code:** 469
+-- **Classes:** 5 
+-- **Methods:** 29
+-- **Files:** 4 Python files
